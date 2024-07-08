@@ -1,5 +1,5 @@
-class Jsoninput2 {
-  static const jsonInput2 = '''
+class Input2 {
+  static const input2 = '''
 [
   {
     "0": {"id": 1, "title": "Gingerbread"},
