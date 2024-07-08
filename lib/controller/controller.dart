@@ -3,25 +3,44 @@ import 'dart:convert';
 import 'package:bdcallingtask/model/android_version_model.dart';
 
 class Controller {
-  static List<AndroidVersion> parseJsonM1(String jsonData) {
-    final List<AndroidVersion> lists = [];
-    final data = json.decode(jsonData);
+  static List<List<AndroidVersion?>> parseJsonM1(String jsonString) {
+    var jsonData = json.decode(jsonString);
 
-    for (var item in data) {
-      if (item is Map) {
-        item.values.forEach((value) {
-          lists.add(AndroidVersion(id: value['id'], title: value['title']));
+    List<List<AndroidVersion?>> sections = [];
+
+    jsonData.forEach((item) {
+      if (item is Map<String, dynamic>) {
+        int maxIndex = 0;
+        item.forEach((key, value) {
+          int index = int.tryParse(key) ?? 0;
+          if (index > maxIndex) maxIndex = index;
         });
-        // for (var list in item.values) {
-        //   lists.add(AndroidVersion(
-        //       id: list['id'], title: list['title'].toString().trim()));
-        // }
+
+        List<AndroidVersion?> androidVersions =
+            List.filled(maxIndex + 1, null, growable: true);
+
+        item.forEach((key, value) {
+          int index = int.tryParse(key) ?? 0;
+          androidVersions[index] = AndroidVersion(
+            id: value['id'],
+            title: value['title'],
+          );
+        });
+
+        sections.add(androidVersions);
       } else if (item is List) {
-        item.forEach((value) {
-          lists.add(AndroidVersion(id: value['id'], title: value['title']));
-        });
+        List<AndroidVersion?> androidVersions =
+            item.map<AndroidVersion?>((value) {
+          return AndroidVersion(
+            id: value['id'],
+            title: value['title'],
+          );
+        }).toList();
+
+        sections.add(androidVersions);
       }
-    }
-    return lists;
+    });
+
+    return sections;
   }
 }

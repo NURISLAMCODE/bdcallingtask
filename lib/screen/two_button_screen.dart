@@ -1,73 +1,17 @@
 import 'package:bdcallingtask/json/input1.dart';
 import 'package:bdcallingtask/json/input2.dart';
+import 'package:bdcallingtask/model/android_version_model.dart';
 import 'package:flutter/material.dart';
 
 import '../controller/controller.dart';
 
 class ButtonScreen extends StatelessWidget {
   const ButtonScreen({super.key});
-
-  static void showJson1Button(BuildContext context) {
-    final data = Controller.parseJsonM1(Input1.input1);
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text(" JSON Output 1"),
-        content: Container(
-          width: double.maxFinite,
-          child: GridView.builder(
-            shrinkWrap: true,
-            itemCount: data.length,
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              childAspectRatio: 3, // Adjusts height to show text properly
-            ),
-            itemBuilder: (context, index) {
-              final version = data[index];
-              return Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text('${version.title}'),
-              );
-            },
-          ),
-        ),
-      ),
-    );
-  }
-
-  static void showJson2Button(BuildContext context) {
-    final data = Controller.parseJsonM1(Input2.input2);
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text(" JSON Output 2"),
-        content: Container(
-          width: double.maxFinite,
-          child: GridView.builder(
-            shrinkWrap: true,
-            itemCount: data.length,
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              childAspectRatio: 3, // Adjusts height to show text properly
-            ),
-            itemBuilder: (context, index) {
-              final version = data[index];
-              return Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text('${version.title}'),
-              );
-            },
-          ),
-        ),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Center(child: const Text("Flutter JSON Task")),
+        title: const Center(child: Text("Flutter JSON Task")),
       ),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -76,7 +20,15 @@ class ButtonScreen extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               ElevatedButton(
-                onPressed: () => showJson1Button(context),
+                onPressed: () {
+                  List<List<AndroidVersion?>> sections =
+                      Controller.parseJsonM1(Input1.input1);
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => OutputScreen(sections: sections),
+                    ),
+                  );
+                },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.blue,
                   padding: const EdgeInsets.symmetric(
@@ -91,11 +43,19 @@ class ButtonScreen extends StatelessWidget {
                 ),
               ),
               ElevatedButton(
-                onPressed: () => showJson2Button(context),
+                onPressed: () {
+                  List<List<AndroidVersion?>> sections =
+                      Controller.parseJsonM1(Input2.input2);
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => OutputScreen(sections: sections),
+                    ),
+                  );
+                },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.blue,
-                  padding:
-                      EdgeInsets.symmetric(horizontal: 32.0, vertical: 16.0),
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 32.0, vertical: 16.0),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12.0),
                   ),
@@ -108,6 +68,36 @@ class ButtonScreen extends StatelessWidget {
             ],
           ),
         ],
+      ),
+    );
+  }
+}
+
+class OutputScreen extends StatelessWidget {
+  final List<List<AndroidVersion?>> sections;
+
+  OutputScreen({required this.sections});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Output'),
+      ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: sections
+              .expand((section) => section)
+              .map((version) => Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(
+                      version?.title ?? '',
+                      style: TextStyle(fontSize: 18),
+                    ),
+                  ))
+              .toList(),
+        ),
       ),
     );
   }
