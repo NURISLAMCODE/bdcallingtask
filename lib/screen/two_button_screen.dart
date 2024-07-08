@@ -84,19 +84,37 @@ class OutputScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text('Output'),
       ),
+      // body: Center(
+      //   child: Column(
+      //     mainAxisAlignment: MainAxisAlignment.center,
+      //     children: sections
+      //         .expand((section) => section)
+      //         .map((version) => Padding(
+      //               padding: const EdgeInsets.all(8.0),
+      //               child: Text(
+      //                 version?.title ?? '',
+      //                 style: TextStyle(fontSize: 18),
+      //               ),
+      //             ))
+      //         .toList(),
+      //   ),
+      // ),
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: sections
-              .expand((section) => section)
-              .map((version) => Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(
-                      version?.title ?? '',
-                      style: TextStyle(fontSize: 18),
-                    ),
-                  ))
-              .toList(),
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Wrap(
+            spacing: 18.0, // space between items
+            runSpacing: 18.0, // space between rows
+            children: sections
+                .expand((section) => section)
+                .map((version) => Chip(
+                      label: Text(
+                        version?.title ?? '',
+                        style: TextStyle(fontSize: 18),
+                      ),
+                    ))
+                .toList(),
+          ),
         ),
       ),
     );
